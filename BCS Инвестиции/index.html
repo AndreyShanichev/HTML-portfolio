@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=300,height=600">
+    <title>BCS Stocks 300x600</title>
+    <style>
+        :root {
+            --banner-width: 300px;
+            --banner-height: 600px;
+            --banner-vmin: min(var(--banner-width), var(--banner-height));
+            --banner-vmax: max(var(--banner-width), var(--banner-height));
+        }
+
+        @font-face {
+            font-family: Suisse Intl;
+            src: url('suisseintl-regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: var(--banner-width);
+            height: var(--banner-height);
+            border: 1px solid #000;
+            position: relative;
+            font-family: 'Suisse Intl', Arial, sans-serif;
+        }
+
+        #banner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            overflow: hidden;
+            background: #001A3D;
+        }
+
+        .logo {
+            width: 90%;
+            height: auto;
+            position: absolute;
+            top: 7.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .header-container {
+            width: 100%;
+            position: absolute;
+            top: 27.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+        
+        .header-container.in {
+            top: 50%;
+        }
+
+        .header-container.out {
+            opacity: 0;
+        }
+
+        .header-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .header {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+            color: white;
+            text-align: left;
+            line-height: 1.05;
+        }
+
+        .amounts {
+            width: 100%;
+            position: absolute;
+            top: 63.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .amount-item {
+            width: 100%;
+            height: auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 17.5%;
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+            cursor: pointer;
+        }
+        
+        .amount-item.in {
+            transform: translateY(75%);
+            opacity: 0;
+        }
+        
+        .amount-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .amount-item img:nth-child(1), .amount-item img:nth-child(2) {
+            position: absolute;
+            width: 100%;
+            height: auto;
+        }
+
+        .border-white {
+            opacity: 0;
+            transition: opacity 1s linear;
+        }
+
+        .amount-number {
+            width: 62.5%;
+            height: auto;
+            position: relative;
+            transition: filter 1s linear;
+            filter: none;
+        }
+
+        .button-count, .button-view {
+            width: 90%;
+            position: absolute;
+            bottom: 7.5%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            background: #006FF9;
+            border: none;
+            border-radius: 10px;
+            font-size: 23px;
+            color: white;
+            padding: 15px 0px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+        
+        .button-count.in, .button-view.in {
+            visibility: hidden;
+            transform: translate(-50%, 50%) scale(0.75);
+            opacity: 0;
+        }
+
+        .legal {
+            width: 85%;
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            line-height: 1.05;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .content,
+        .packshot,
+        .legal {
+            display: none;
+        }
+        
+        .content.active,
+        .packshot.active,
+        .legal.active {
+            display: block;
+        }
+
+        .packshot-header, .stocks-text {
+            position: absolute;
+            top: 21.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+            color: white;
+            text-align: left;
+            line-height: 1.05;
+            text-wrap: nowrap;
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+
+        .packshot-header.in {
+            transform: translate(-50%, 50%);
+            opacity: 0;
+        }
+
+        .income-item {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 42.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+
+        .income-item.in {
+            transform: translate(-50%, 50%);
+            opacity: 0;
+        }
+
+        .income-item img {
+            position: absolute;
+            width: 100%;
+            height: auto;
+        }
+
+        .income-item img:nth-child(2){
+            width: 67.5%;
+        }
+
+        .income-number {
+            position: relative;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.25));
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+
+        .percent-number {
+            position: absolute;
+            width: 42.5%;
+            height: auto;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.25));
+            transition: all 1s cubic-bezier(0.3, 0, 0.1, 1);
+        }
+
+        .percent-number.in {
+            transform: translate(-50%, -50%) scale(0.75);
+            opacity: 0;
+        }
+
+        .stocks-text {
+            top: 72.5%;
+        }
+
+        .stocks-text.in {
+            transform: translate(-50%, -50%) scale(0.75);
+            opacity: 0;
+        }
+    </style>
+    <script>
+        var clickTag = "https://bcs.ru";
+    </script>
+</head>
+
+<body>
+    <div class="banner" id="banner">
+        <img src="assets/Color=bedge, Short=off.png" class="logo">
+        
+        <div class="content">
+            <div class="header-container in">
+                <img src="assets/border_big.png" class="border-big">
+                <div class="header">
+                    Если бы вы<br>инвестировали<br>3 года назад
+                </div>
+            </div>
+
+            <div class="amounts">
+                <div class="amount-item in">
+                    <img src="assets/border_small_blue.png" class="border-blue">
+                    <img src="assets/border_small_white.png" class="border-white">
+                    <img src="assets/1_000_000.svg" class="amount-number">
+                </div>
+
+                <div class="amount-item in">
+                    <img src="assets/border_small_blue.png" class="border-blue">
+                    <img src="assets/border_small_white.png" class="border-white">
+                    <img src="assets/2_500_000.svg" class="amount-number">
+                </div>
+
+                <div class="amount-item in">
+                    <img src="assets/border_small_blue.png" class="border-blue">
+                    <img src="assets/border_small_white.png" class="border-white">
+                    <img src="assets/5_000_000.svg" class="amount-number">
+                </div>
+            </div>
+
+            <div class="button-count in">
+                Рассчитать
+            </div>
+        </div>
+
+        <div class="packshot">
+            <div class="packshot-header in">
+                Вы бы заработали
+            </div>
+
+            <div class="income-item in">
+                <img src="assets/border_medium.png" class="border-medium">
+                <img src="assets/1_711_000.svg" class="income-number">
+            </div>
+
+            <img src="assets/+71,1.svg" class="percent-number in">
+            <div class="stocks-text in">по акциям</div>
+
+            <a href="javascript:void(window.open(window.clickTag))" class="button-view in">
+                Посмотреть акции
+            </a>
+        </div>
+
+        <div class="legal">
+            18+ Реклама. ООО «Компания БКС». Лицензия No 154-04434-100000 от 10.01.2001 на осуществление брокерской деятельности.<br><br>ИНН 5406121446. Доходность не гарантирована ООО «Компания БКС». Не является индивидуальной инвестиционной рекомендацией. Информация о доходности носит оценочный характер и не является заверением/гарантией ее получения в будущем. Подробнее https://bcs.ru<br><br>Управление ПИФом осуществляет АО УК «БКС», лицензия ФКЦБ № 21-000-1-00071 от 25.06.2002. Подробную информацию об осуществлении АО УК «БКС» деятельности по управлению ПИФами вы можете найти на сайте: www.bcs.ru/am, в ленте ООО «Интерфакс-ЦРКИ», в АО УК «БКС» по адресу: Российская Федерация, 630099, г. Новосибирск, ул. Советская, 37. Тел.: +7 383 210-50-20.<br><br>Изменение стоимости пая «БКС Российские Акции» на 30.09.2025 за 1, 3, 6 месяцев, 1 год и 3 года и 5 лет составило соответственно -8,02%, -3,37%, -5,36%, -5,17%, +71,16, +44,11%. Дополнительная информация — на сайте УК БКС (https://bcs.ru/am/).<br><br>Изменение стоимости пая «БКС Российские облигации» на 30.09.2025 за 1, 3, 6 месяцев, 1 год и 3 года и 5 лет составило соответственно -0,52%, +6,93%, +13,86%, +24,52%, +42,16, +46,44%. Дополнительная информация — на сайте УК БКС (https://bcs.ru/am/).<br><br>Не является банковским вкладом,не застраховано АСВ.
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.content');
+            const packshot = document.querySelector('.packshot');
+            const legal = document.querySelector('.legal');
+            const headerContainer = document.querySelector('.header-container');
+            const amountItems = document.querySelectorAll('.amount-item');
+            const buttonCount = document.querySelector('.button-count');
+            const buttonView = document.querySelector('.button-view');
+            const borderWhites = document.querySelectorAll('.border-white');
+            const amountNumbers = document.querySelectorAll('.amount-number');
+            const packshotHeader = document.querySelector('.packshot-header');
+            const incomeItem = document.querySelector('.income-item');
+            const percentNumber = document.querySelector('.percent-number');
+            const stocksText = document.querySelector('.stocks-text');
+            
+            let showContentTimeout;
+            let nextCycleTimeout;
+            let isCycleActive = true;
+            
+            function detectEnvironment() {
+                var visitorId = '%%VISITOR_ID%%';
+                
+                if (visitorId === '%%VISITOR_ID%%' || visitorId === '' || visitorId === '$VISITOR_ID') {
+                    return 'web';
+                }
+                return 'inapp';
+            }
+            
+            var environment = detectEnvironment();
+            console.log('Detected environment:', environment);
+            
+            const trackingPixels = {
+                web: [
+                    'https://tag.rutarget.ru/tag?event=addToSegment&name=stocks1m_web&value=new',
+                    'https://tag.rutarget.ru/tag?event=addToSegment&name=stocks25m_web&value=new',
+                    'https://tag.rutarget.ru/tag?event=addToSegment&name=stocks5m_web&value=new'
+                ],
+                inapp: [
+                    'https://tag.rutarget.ru/tag?event=addToSegment&vid=%%VISITOR_ID%%&name=stocks1m_app&value=new',
+                    'https://tag.rutarget.ru/tag?event=addToSegment&vid=%%VISITOR_ID%%&name=stocks25m_app&value=new',
+                    'https://tag.rutarget.ru/tag?event=addToSegment&vid=%%VISITOR_ID%%&name=stocks5m_app&value=new'
+                ]
+            };
+            
+            function firePixel(url) {
+                var img = new Image(1, 1);
+                img.src = url;
+                console.log('Firing pixel:', url);
+            }
+            
+            function animateAmounts(borderElement, numberElement, delay) {
+                setTimeout(() => {
+                    borderElement.style.opacity = '1';
+                    numberElement.style.filter = 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.25))';
+                    
+                    setTimeout(() => {
+                        borderElement.style.opacity = '0';
+                        numberElement.style.filter = 'none';
+                    }, 1250);
+                }, delay);
+            }
+            
+            function playAmountsAnimations() {
+                animateAmounts(borderWhites[0], amountNumbers[0], 0);
+                animateAmounts(borderWhites[1], amountNumbers[1], 1000);
+                animateAmounts(borderWhites[2], amountNumbers[2], 2000);
+            }
+            
+            function showContent() {
+                if (!isCycleActive) return;
+                
+                content.classList.add('active');
+                legal.classList.remove('active');
+                packshot.classList.remove('active');
+                
+                setTimeout(() => {
+                    playAmountsAnimations();
+                }, 1000);
+            }
+            
+            function showLegal() {
+                if (!isCycleActive) return;
+                
+                legal.classList.add('active');
+                content.classList.remove('active');
+                packshot.classList.remove('active');
+            }
+            
+            function hideContent() {
+                headerContainer.classList.add('out');
+                
+                setTimeout(() => {
+                    amountItems[2].classList.add('in');
+                }, 0);
+                
+                setTimeout(() => {
+                    amountItems[1].classList.add('in');
+                }, 250);
+                
+                setTimeout(() => {
+                    amountItems[0].classList.add('in');
+                }, 500);
+                
+                setTimeout(() => {
+                    buttonCount.classList.add('in');
+                }, 500);
+
+                setTimeout(() => {
+                    content.classList.remove('active');
+                }, 1500);
+            }
+            
+            function showPackshot(incomeValue) {
+                legal.classList.remove('active');
+                packshot.classList.add('active');
+                
+                const incomeNumberElement = incomeItem.querySelector('.income-number');
+                incomeNumberElement.src = incomeValue;
+                
+                setTimeout(() => {
+                    packshotHeader.classList.remove('in');
+                }, 500);
+                
+                setTimeout(() => {
+                    incomeItem.classList.remove('in');
+                }, 1000);
+                
+                setTimeout(() => {
+                    percentNumber.classList.remove('in');
+                }, 1500);
+                
+                setTimeout(() => {
+                    stocksText.classList.remove('in');
+                }, 1750);
+                
+                setTimeout(() => {
+                    buttonView.classList.remove('in');
+                }, 2250);
+            }
+            
+            function startCycle() {
+                if (!isCycleActive) return;
+                
+                showLegal();
+                
+                showContentTimeout = setTimeout(() => {
+                    showContent();
+                    
+                    nextCycleTimeout = setTimeout(() => {
+                        startCycle();
+                    }, 6000);
+                }, 3000);
+            }
+            
+            legal.addEventListener('click', function() {
+                if (legal.classList.contains('active')) {
+                    clearTimeout(showContentTimeout);
+                    clearTimeout(nextCycleTimeout);
+                    
+                    showContent();
+                    
+                    setTimeout(() => {
+                        startCycle();
+                    }, 6000);
+                }
+            });
+            
+            const incomeImages = ['assets/1_711_000.svg', 'assets/4_277_500.svg', 'assets/8_555_000.svg'];
+            
+            amountItems.forEach(function(item, index) {
+                item.addEventListener('click', function() {
+                    if (content.classList.contains('active')) {
+                        firePixel(trackingPixels[environment][index]);
+                        
+                        isCycleActive = false;
+                        clearTimeout(showContentTimeout);
+                        clearTimeout(nextCycleTimeout);
+                        
+                        hideContent();
+                        
+                        setTimeout(() => {
+                            showPackshot(incomeImages[index]);
+                        }, 250);
+                    }
+                });
+            });
+            
+            buttonCount.addEventListener('click', function() {
+                if (content.classList.contains('active')) {
+                    isCycleActive = false;
+                    clearTimeout(showContentTimeout);
+                    clearTimeout(nextCycleTimeout);
+                    
+                    const randomIndex = Math.floor(Math.random() * 3);
+                    
+                    firePixel(trackingPixels[environment][randomIndex]);
+                    
+                    hideContent();
+                    
+                    setTimeout(() => {
+                        showPackshot(incomeImages[randomIndex]);
+                    }, 250);
+                }
+            });
+            
+            content.classList.add('active');
+            
+            setTimeout(() => {
+                headerContainer.classList.remove('in');
+
+                setTimeout(() => {
+                    amountItems[0].classList.remove('in');
+                    
+                    setTimeout(() => {
+                        amountItems[1].classList.remove('in');
+                    }, 250);
+                    
+                    setTimeout(() => {
+                        amountItems[2].classList.remove('in');
+                    }, 500);
+                }, 500);
+                
+                setTimeout(() => {
+                    buttonCount.classList.remove('in');
+                }, 1500);
+                
+                setTimeout(() => {
+                    playAmountsAnimations();
+                    
+                    setTimeout(() => {
+                        startCycle();
+                    }, 5000);
+                }, 2000);
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>
